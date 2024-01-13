@@ -1,0 +1,48 @@
+body {
+    background-color: rgba(255, 217, 0, 0.438);
+    font-family: 'Open Sans', sans-serif;
+    margin: 70px 0 70px 0;
+    display: block;
+}
+
+.svg{
+    position: absolute;
+    width: 90%;
+    height: 90% ;
+    transform: translate(4%, 0);
+    pointer-events: none;
+}
+
+
+
+.hide{
+    display:none;
+}
+
+
+
+#result {
+    
+    width: 100%;
+    max-width:1000px;
+    cursor: pointer;
+    overflow-y: auto;
+    max-height: 800px;
+    box-sizing: border-box;
+    z-index: 1001;
+    
+   }
+   .link-class:hover{
+    background-color:#f1f1f1;
+   }
+
+   .center {
+    width: 1000px;
+    height: 800px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    
+    padding: 10px;
+    }
