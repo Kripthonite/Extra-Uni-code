@@ -4,6 +4,9 @@ import urllib.request
 import requests
 from bs4 import BeautifulSoup
 import time
+from selenium import webdriver
+from itertools import cycle
+
 
 
 # List of proxy URLs
@@ -21,23 +24,34 @@ import time
 
 # Create a cycle iterator to rotate through proxies
 #proxy_pool = cycle(proxies)
-
-url = 'https://www.zerozero.pt/equipa/benfica?search=1'  # Replace with the URL of the webpage you want to inspect
+#chromedriver_path = "C:\Program Files (x86)\chromedriver.exe"
+#driver = webdriver.Chrome(chromedriver_path)
+url = 'https://www.zerozero.pt/equipa/benfica?search=1'  
+main_url ='https://www.zerozero.pt'
 global_session = requests.Session()
+user_agents=[]
+proxies = []
+
+
+sleep = 2
 
 def retrievePlayerInfo(url):
     try:
         # Send a GET request and retrieve the HTML content
         #proxy = next(proxy_pool)
         #proxies = { "https": proxy}
-        response = global_session.get(url,headers = {'User-agent': randomizeUserAgent()})
-        response.raise_for_status()
+        
+        response = makeRequest(url)
+        """ if(response.url=="https://www.zerozero.pt/recaptcha.php" or response.status_code!=200):
+            response = wait_cycle(response,sleep) """
+            
 
         # Parse the HTML using BeautifulSoup and lxml parser
         soup = BeautifulSoup(response.content, 'lxml',from_encoding=response.encoding)
         #print(soup)
         teamsquad_div = soup.find('div',id='team_squad')
         players =  teamsquad_div.find_all('div', class_="staff")
+        
         dicplayers = {}
         for player in players:
             if 'inactive' not in player['class']:
@@ -87,9 +101,10 @@ def getPhotos(dicplayers):
             # Send a GET request and retrieve the HTML content
             #proxy = next(proxy_pool)
             #proxies = {"http": proxy, "https": proxy}
-            response = global_session.get(player_photos_url,headers = {'User-agent': randomizeUserAgent()})
-            #response = global_session.get(player_photos_url,headers = {'User-agent': randomizeUserAgent()},proxies=proxies)
-            response.raise_for_status()
+            response = makeRequest(player_photos_url)
+            """ if(response.url=="https://www.zerozero.pt/recaptcha.php" or response.status_code!=200):
+                response = wait_cycle(response,sleep) """
+                
             
 
             # Parse the HTML using BeautifulSoup and lxml parser
@@ -103,9 +118,10 @@ def getPhotos(dicplayers):
                 #proxy = next(proxy_pool)
                 #proxies = {"http": proxy, "https": proxy}
                 link = incChapterlink(player_photos_url,currentChapter)
-                response = global_session.get(link,headers = {'User-agent': randomizeUserAgent()})
-                #response = global_session.get(incChapterlink(player_photos_url,currentChapter),headers = {'User-agent': randomizeUserAgent()},proxies=proxies)
-                response.raise_for_status()
+                response = makeRequest(link)
+                """ if(response.url=="https://www.zerozero.pt/recaptcha.php" or response.status_code!=200):
+                    response = wait_cycle(response,sleep) """
+                
                 #Finding url of photo do download
                 soup = BeautifulSoup(response.content, 'lxml',from_encoding=response.encoding)
                 img_tag = soup.find('div',class_='section_620 photopage').find('img')
@@ -177,7 +193,8 @@ def incChapterlink(url,newchapter):
         modified_url = url[:start_index + len('nchapter=')] + str(newchapter)
     return modified_url
 
-def randomizeUserAgent():
+def readUserAgent():
+    global user_agents
     # Specify the path to your text file
     file_path = "useragents.txt"
     # Open the file in read mode
@@ -185,16 +202,60 @@ def randomizeUserAgent():
         # Read the entire content of the file
         lines = file.readlines()
 
+    lines = [line.strip() for line in lines]
+    user_agents = lines
+    
+def readProxies():
+    global main_url
+    cropped_site = main_url.split(".")[1]
+    file_path = cropped_site+"validproxies.txt"
+    with open(file_path, 'r') as file:
+        # Read the entire content of the file
+        lines = file.readlines()
 
     lines = [line.strip() for line in lines]
+    proxies = lines
+    return proxies
 
-    num_lines=len(lines)
+
+def randomizeUserAgent():
+    global user_agents
+    num_lines=len(user_agents)
     random_line_index = random.randint(0, num_lines - 1)
-    random_line=lines[random_line_index]
-    return random_line             
+    random_line=user_agents[random_line_index]
+    return random_line
+
+def makeRequest(url):
+    global proxy_pool
+    proxy = next(proxy_pool)
+    p = {"http": proxy, "https": proxy}
+    response = global_session.get(url,headers = {'User-agent': randomizeUserAgent()},proxies=p)
+    response.raise_for_status()
+    return response
+   
 
 
+
+
+
+def wait_cycle(response,start_sleep,url):
+    
+    while(response.url=="https://www.zerozero.pt/recaptcha.php" or response.status_code!=200):
+          time.sleep(start_sleep)
+          response = makeRequest(url)
+
+    return response
+
+
+    
+
+#proxies = readProxies()
+proxies = readProxies()
+proxy_pool = cycle(proxies)
+readUserAgent()
 getPhotos(retrievePlayerInfo(url))
+
+
     
 
 
