@@ -17,7 +17,7 @@ import pyautogui
 
 main_url = "https://www.hltv.org"
 cs_path = "G:\photodb\counterstrike"
-number_photos_per_player = 2
+number_photos_per_player = 30
 
 def createFolder(name,path):
     # Specify the path where you want to create the folder
@@ -97,6 +97,10 @@ with SB(uc=True,incognito=True) as sb:
             print(f"Player Name: {player_name}")
             print(f"Player Href: {player_href}")
             player_folder_path= createFolder(player_name,team_folder_path)
+            items = os.listdir(player_folder_path)
+            number_of_items = len(items)
+            if(number_of_items>=number_photos_per_player):
+                continue
             player_path = main_url+player_href
             sb.open(player_path)
             soup = BeautifulSoup(sb.get_page_source(),'lxml')
@@ -119,9 +123,12 @@ with SB(uc=True,incognito=True) as sb:
             
             #print(photos_ids)
             counter = 1
+            
+            
             for photo_id in photos_ids:
                 if(counter>number_photos_per_player):
                     break
+                
                 photo_a=photo_id.find('a')
                 if(photo_a!=None):
                    photo_href = photo_a['href']
@@ -132,9 +139,14 @@ with SB(uc=True,incognito=True) as sb:
                    player_tags_a = player_tags.find_all('a')
                    if(len(player_tags_a)>1):
                        continue
+                   if(counter<=number_of_items):
+                       counter+=1
+                       continue
+
                    sb.click_link_text("Download")
                    path_to_save = player_folder_path + "\\" + player_name+str(counter)+".jpg"
-                   saveimg(path_to_save,sb)
+                   if(not os.path.exists(path_to_save)):
+                        saveimg(path_to_save,sb)
                    counter+=1
             
 
