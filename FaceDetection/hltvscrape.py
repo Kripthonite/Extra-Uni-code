@@ -18,7 +18,7 @@ import photo_filtering as pf
 
 main_url = "https://www.hltv.org"
 cs_path = "G:\photodb\counterstrike"
-number_photos_per_player = 2
+number_photos_per_player = 1
 
 def createFolder(name,path):
     # Specify the path where you want to create the folder
@@ -153,8 +153,9 @@ with SB(uc=True,incognito=True) as sb:
                    counter+=1
 
             print(player_folder_path)
-            time.sleep(1)       
-            pf.init(player_folder_path)      
+
+pf.filterAllDb(cs_path)                  
+                 
 
             
 

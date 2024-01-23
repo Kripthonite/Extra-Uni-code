@@ -78,12 +78,27 @@ def invalidateImg(path):
     else:
         print(f"Error: Unable to load the image at '{path}'.")
 
-def init(folder_path):
+#cs_path = r"G:\photodb\counterstrike" ex of arg
+def init(folder_path): # use after all desired player photos have been downloaded
     items = os.listdir(folder_path)
     print(len(items))
     for item in items:
         #print(item)
         full_img_path = folder_path + "\\" + item
         invalidateImg(full_img_path)
+
+def filterAllDb(folder_path): # use in the end of all the web scraping
+    teams = os.listdir(folder_path)
+    for team in teams:
+        teams_path = folder_path + "\\" + team
+        players = os.listdir(teams_path)
+        for player in players:
+            player_path = teams_path + "\\" + player
+            imgs = os.listdir(player_path)
+            for img in imgs:
+                full_img_path = player_path + "\\" + img
+                invalidateImg(full_img_path)
+
+#filterAllDb(r"G:\photodb\counterstrike")                
 
     
