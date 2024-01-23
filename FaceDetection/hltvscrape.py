@@ -14,10 +14,11 @@ import undetected_chromedriver.v2 as uc
 from undetected_chromedriver.v2 import Chrome, ChromeOptions
 from seleniumbase import SB
 import pyautogui
+import photo_filtering as pf
 
 main_url = "https://www.hltv.org"
 cs_path = "G:\photodb\counterstrike"
-number_photos_per_player = 30
+number_photos_per_player = 2
 
 def createFolder(name,path):
     # Specify the path where you want to create the folder
@@ -123,10 +124,12 @@ with SB(uc=True,incognito=True) as sb:
             
             #print(photos_ids)
             counter = 1
-            
-            
+            number = number_photos_per_player
+            if(len(photos_ids)<number_photos_per_player): #if there's no sufficient photos to achieve number_photos_per_player , download all available
+                number = len(photos_ids)
+
             for photo_id in photos_ids:
-                if(counter>number_photos_per_player):
+                if(counter>number):
                     break
                 
                 photo_a=photo_id.find('a')
@@ -137,9 +140,9 @@ with SB(uc=True,incognito=True) as sb:
                    soup = BeautifulSoup(sb.get_page_source(),'lxml')
                    player_tags = soup.find('div',class_='players')
                    player_tags_a = player_tags.find_all('a')
-                   if(len(player_tags_a)>1):
+                   if(len(player_tags_a)>1): #disregard photos than more with 1 player tag
                        continue
-                   if(counter<=number_of_items):
+                   if(counter<=number_of_items): #if program breaks, it'll restart at where it's supposed
                        counter+=1
                        continue
 
@@ -148,6 +151,11 @@ with SB(uc=True,incognito=True) as sb:
                    if(not os.path.exists(path_to_save)):
                         saveimg(path_to_save,sb)
                    counter+=1
+
+            print(player_folder_path)
+            time.sleep(1)       
+            pf.init(player_folder_path)      
+
             
 
 
