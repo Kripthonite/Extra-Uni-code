@@ -73,7 +73,7 @@ def invalidateImg(path):
                 cv.rectangle(resized_image, (startX, startY), (endX, endY), (0, 255, 0), 2)
 
 
-        display_image('Expanded Bounding Boxes',resized_image,desired_width,desired_height)
+        #display_image('Expanded Bounding Boxes',resized_image,desired_width,desired_height)
         """ cv.imshow('Expanded Bounding Boxes', resized_image)
         cv.waitKey(0)
         cv.destroyAllWindows() """

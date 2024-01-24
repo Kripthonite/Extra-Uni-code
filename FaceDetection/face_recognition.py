@@ -19,7 +19,7 @@ def display_image(windowname,image,w,h):
 def preprocess_image(img, net=None):
    
     # Set the desired width for resizing
-    desired_width = 1920
+    desired_width = 1000
 
     # Calculate the corresponding height to maintain the aspect ratio
     aspect_ratio = img.shape[1] / img.shape[0]
@@ -64,7 +64,7 @@ new_image = cv.imread(new_image_path)
 preprocessed_image = preprocess_image(new_image, net)
 
 # Create a blob from the preprocessed image
-blob = cv.dnn.blobFromImage(preprocessed_image, scalefactor=1.0, size=(160, 160), mean=(104, 177, 123))
+blob = cv.dnn.blobFromImage(preprocessed_image, scalefactor=1.0, size=(300, 300), mean=(104, 177, 123))
 
 # Forward pass to get the embedding
 net.setInput(blob)

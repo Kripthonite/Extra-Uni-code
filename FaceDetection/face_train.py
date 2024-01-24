@@ -82,7 +82,7 @@ for team in sorted(os.listdir(dataset_path)):
             preprocessed_image = preprocess_image(img, net)
 
             # Create blob from preprocessed image
-            blob = cv.dnn.blobFromImage(preprocessed_image, scalefactor=1.0, size=(160, 160), mean=(104, 177, 123))
+            blob = cv.dnn.blobFromImage(preprocessed_image, scalefactor=1.0, size=(300, 300), mean=(104, 177, 123))
             
             # Forward pass to get embeddings
             net.setInput(blob)
