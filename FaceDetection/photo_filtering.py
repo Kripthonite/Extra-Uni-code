@@ -1,19 +1,16 @@
 import os
-import time
 import cv2 as cv
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 from mtcnn import MTCNN
 import numpy as np
 
 
 
 # Read the image
-folder_path = r"G:\photodb\counterstrike\Vitality\apEX"
+#folder_path = r"G:\photodb\counterstrike\Vitality\apEX"
 #haar_cascadeface = cv.CascadeClassifier('haarface.xml')
 #haar_cascadeprofile = cv.CascadeClassifier('profileface.xml')
-# Create an MTCNN detector
-detector = MTCNN()
+
+#detector = MTCNN()
 deploy_path =r"C:\Users\Usuario\Desktop\projetomiguel\FaceDetection\deploy.prototxt.txt"
 caffemodel_path = r"C:\Users\Usuario\Desktop\projetomiguel\FaceDetection\res10_300x300_ssd_iter_140000.caffemodel"
 net = cv.dnn.readNetFromCaffe(deploy_path, caffemodel_path)
@@ -32,7 +29,18 @@ def deletePhoto(photo_path):
     except Exception as e:
         print(f"Error: {e}")
 
-       
+def display_image(windowname,image,w,h):
+    
+    
+
+    # Set the size of the window
+    cv.namedWindow(windowname, cv.WINDOW_NORMAL)
+    cv.resizeWindow(windowname,w,h)  # Set the desired width and height
+
+    # Display the image
+    cv.imshow(windowname, image)
+    cv.waitKey(0)
+    cv.destroyAllWindows()      
 
 def invalidateImg(path):
     # Read the original image
@@ -42,7 +50,7 @@ def invalidateImg(path):
     if original_image is not None:
 
         # Set the desired width for resizing
-        desired_width = 1920
+        desired_width = 1000
 
         # Calculate the corresponding height to maintain the aspect ratio
         aspect_ratio = original_image.shape[1] / original_image.shape[0]
@@ -65,11 +73,12 @@ def invalidateImg(path):
                 cv.rectangle(resized_image, (startX, startY), (endX, endY), (0, 255, 0), 2)
 
 
-
-        #cv.imshow('Expanded Bounding Boxes', resized_image)
+        display_image('Expanded Bounding Boxes',resized_image,desired_width,desired_height)
+        """ cv.imshow('Expanded Bounding Boxes', resized_image)
+        cv.waitKey(0)
+        cv.destroyAllWindows() """
         print(f"Number of faces found: {num_faces_found}")
-        """ cv.waitKey(0)
-        cv.destroyAllWindows()   """  
+        
 
         # Display the original image with manual resizing enabled
         #cv.namedWindow("Resized Image", cv.WINDOW_NORMAL)
