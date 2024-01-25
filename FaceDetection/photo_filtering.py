@@ -17,6 +17,9 @@ net = cv.dnn.readNetFromCaffe(deploy_path, caffemodel_path)
 invalid_images = []  # List to store paths of images to be deleted
 
 
+
+
+
 def deletePhoto(photo_path):
     try:
         # Check if the file exists before attempting to delete
@@ -50,7 +53,7 @@ def invalidateImg(path):
     if original_image is not None:
 
         # Set the desired width for resizing
-        desired_width = 1000
+        desired_width = 1920
 
         # Calculate the corresponding height to maintain the aspect ratio
         aspect_ratio = original_image.shape[1] / original_image.shape[0]
@@ -70,8 +73,10 @@ def invalidateImg(path):
                 num_faces_found += 1
                 box = detections[0, 0, i, 3:7] * np.array([resized_image.shape[1], resized_image.shape[0], resized_image.shape[1], resized_image.shape[0]])
                 (startX, startY, endX, endY) = box.astype("int")
+                cropped_face = resized_image[startY:endY, startX:endX].copy()
                 cv.rectangle(resized_image, (startX, startY), (endX, endY), (0, 255, 0), 2)
-
+                
+                #display_image("cropped_face",cropped_face,cropped_face.shape[1],cropped_face.shape[0])
 
         #display_image('Expanded Bounding Boxes',resized_image,desired_width,desired_height)
         """ cv.imshow('Expanded Bounding Boxes', resized_image)
@@ -83,8 +88,11 @@ def invalidateImg(path):
         # Display the original image with manual resizing enabled
         #cv.namedWindow("Resized Image", cv.WINDOW_NORMAL)
         #cv.imshow("Resized Image", resized_image)
+        if(num_faces_found==1):
+            print(" 1 face found")
+            cv.imwrite(path, cropped_face)
 
-        if(num_faces_found!=1):
+        else:
             print(f"invalidated {path}")
             invalid_images.append(path)
     
